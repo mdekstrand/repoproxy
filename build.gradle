@@ -1,0 +1,14 @@
+apply plugin: 'java'
+
+group 'net.elehack.repoproxy'
+version '0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.typesafe:config:1.2.1'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
+    compile 'org.apache.httpcomponents:httpclient:4.3.2'
+}
