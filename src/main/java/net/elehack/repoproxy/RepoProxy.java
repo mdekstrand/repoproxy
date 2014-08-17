@@ -43,26 +43,28 @@ public class RepoProxy implements Runnable {
         proxy.run();
     }
 
+    ServerConfiguration config;
     DefaultBHttpServerConnectionFactory factory;
     HttpService service;
     ExecutorService pool;
 
     @Override
     public void run() {
-        ServerConfiguration config = ServerConfiguration.load(configFile);
+        config = ServerConfiguration.load(configFile);
 
         service = createService();
+        factory = DefaultBHttpServerConnectionFactory.INSTANCE;
 
         pool = Executors.newCachedThreadPool();
 
         try {
-            factory = DefaultBHttpServerConnectionFactory.INSTANCE;
-            ServerSocket server = new ServerSocket(config.getPort());
-            logger.info("listening on {}:{}",
-                        server.getInetAddress().getHostAddress(),
-                        server.getLocalPort());
+            try (ServerSocket server = new ServerSocket(config.getPort())) {
+                logger.info("listening on {}:{}",
+                            server.getInetAddress().getHostAddress(),
+                            server.getLocalPort());
 
-            handleConnections(server);
+                handleConnections(server);
+            }
         } catch (IOException e) {
             logger.error("I/O error in server loop", e);
             throw new RuntimeException("Server error", e);
@@ -79,7 +81,7 @@ public class RepoProxy implements Runnable {
                                     .add(new ResponseContent())
                                     .add(new ResponseConnControl())
                                     .build();
-        return new HttpService(proc, (HttpRequest req) -> new ProxyRequestHandler());
+        return new HttpService(proc, (HttpRequest req) -> new ProxyRequestHandler(config));
     }
 
     private void handleConnections(ServerSocket server) throws IOException {
