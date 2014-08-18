@@ -60,7 +60,7 @@ public class ServerConfigurationTest {
         assertThat(config.findRepository("/foo").orElse(null),
                    nullValue());
 
-        Repository repo = config.findRepository("/maven").orElse(null);
+        Repository repo = config.findRepository("maven").orElse(null);
         assertThat(repo, notNullValue());
         assertThat(repo.getName(), equalTo("maven"));
         assertThat(repo.getCache(), instanceOf(FSCache.class));

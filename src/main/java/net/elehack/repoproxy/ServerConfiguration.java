@@ -5,7 +5,6 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigObject;
 import net.elehack.repoproxy.repo.Repository;
 import net.elehack.repoproxy.repo.RepositoryBuilder;
-import net.elehack.repoproxy.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,13 +69,8 @@ public class ServerConfiguration {
         }
     }
 
-    public Optional<Repository> findRepository(String path) {
-        String search = PathUtils.tokenize(path)
-                                 .stream()
-                                 .filter((String s) -> !s.isEmpty())
-                                 .findFirst()
-                                 .orElseThrow(() -> new IllegalArgumentException(path));
-        return Optional.ofNullable(repositories.get(search));
+    public Optional<Repository> findRepository(String name) {
+        return Optional.ofNullable(repositories.get(name));
     }
 
     private Repository createRepository(ConfigObject co) {
