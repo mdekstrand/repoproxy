@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class RepositoryBuilder {
     private Optional<Path> cacheRoot;
-    private String path;
+    private String name;
     private URI uri;
     private Layout layout;
 
@@ -21,8 +21,8 @@ public class RepositoryBuilder {
         return this;
     }
 
-    public RepositoryBuilder setPath(String path) {
-        this.path = path;
+    public RepositoryBuilder setName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -42,7 +42,7 @@ public class RepositoryBuilder {
 
     public RepositoryBuilder addConfig(ConfigObject co) {
         Config cfg = co.toConfig();
-        setPath(cfg.getString("path"));
+        setName(cfg.getString("name"));
         try {
             setUri(new URI(cfg.getString("uri")));
         } catch (URISyntaxException e) {
@@ -54,8 +54,8 @@ public class RepositoryBuilder {
 
     public Repository build() {
         RepositoryCache cache =
-                cacheRoot.map((Path p) -> RepositoryCache.directory(p.resolve(path)))
+                cacheRoot.map((Path p) -> RepositoryCache.directory(p.resolve(name)))
                          .orElseGet(RepositoryCache::blackHole);
-        return new Repository(path, uri, layout, cache);
+        return new Repository(name, uri, layout, cache);
     }
 }

@@ -14,7 +14,7 @@ public interface RepositoryCache {
         return new BlackholeCache();
     }
 
-    public static RepositoryCache directory(Path pth) {
-        return null;
+    public static RepositoryCache directory(Path path) {
+        return new FSCache(path);
     }
 }

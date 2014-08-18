@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * Cache that doesn't cache anything.
  */
-class BlackholeCache implements RepositoryCache {
+public class BlackholeCache implements RepositoryCache {
     @Override
     public boolean hasEntry(Path path) {
         return false;

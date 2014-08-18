@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigObject;
 import net.elehack.repoproxy.repo.Repository;
 import net.elehack.repoproxy.repo.RepositoryBuilder;
+import net.elehack.repoproxy.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ServerConfiguration {
@@ -21,7 +24,7 @@ public class ServerConfiguration {
 
     private Config config;
     private Optional<Path> cacheBase;
-    private List<Repository> repositories;
+    private Map<String,Repository> repositories;
 
     public ServerConfiguration(Config cfg) {
         config = cfg;
@@ -32,9 +35,10 @@ public class ServerConfiguration {
             repositories = config.getObjectList("repositories")
                                  .stream()
                                  .map(this::createRepository)
-                                 .collect(Collectors.toList());
+                                 .collect(Collectors.toMap(Repository::getName,
+                                                           Function.identity()));
         } else {
-            repositories = Collections.emptyList();
+            repositories = Collections.emptyMap();
         }
     }
 
@@ -51,7 +55,7 @@ public class ServerConfiguration {
     }
 
     public List<Repository> getRepositories() {
-        return repositories;
+        return repositories.values().stream().collect(Collectors.toList());
     }
 
     public Optional<Path> getCacheBase() {
@@ -66,9 +70,20 @@ public class ServerConfiguration {
         }
     }
 
+    public Optional<Repository> findRepository(String path) {
+        String search = PathUtils.tokenize(path)
+                                 .stream()
+                                 .filter((String s) -> !s.isEmpty())
+                                 .findFirst()
+                                 .orElseThrow(() -> new IllegalArgumentException(path));
+        return Optional.ofNullable(repositories.get(search));
+    }
+
     private Repository createRepository(ConfigObject co) {
         RepositoryBuilder rb = Repository.newBuilder();
-        cacheBase.map(rb::setCacheRoot);
+        if (cacheBase.isPresent()) {
+            rb.setCacheRoot(cacheBase.get());
+        }
         rb.addConfig(co);
         return rb.build();
     }

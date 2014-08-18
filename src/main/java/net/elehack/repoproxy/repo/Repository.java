@@ -6,7 +6,7 @@ import net.elehack.repoproxy.layout.Layout;
 import java.net.URI;
 
 public class Repository {
-    private String path;
+    private String name;
     private URI uri;
     private Layout layout;
     private RepositoryCache cache;
@@ -15,15 +15,15 @@ public class Repository {
         return new RepositoryBuilder();
     }
 
-    Repository(String path, URI uri, Layout layout, RepositoryCache cache) {
-        this.path = path;
+    Repository(String name, URI uri, Layout layout, RepositoryCache cache) {
+        this.name = name;
         this.uri = uri;
         this.layout = layout;
         this.cache = cache;
     }
 
-    public String getPath() {
-        return path;
+    public String getName() {
+        return name;
     }
 
     public URI getUri() {

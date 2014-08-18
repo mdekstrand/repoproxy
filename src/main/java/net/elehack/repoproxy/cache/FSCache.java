@@ -6,11 +6,15 @@ import java.util.Optional;
 /**
  * Cache that doesn't cache anything.
  */
-class FSCache implements RepositoryCache {
-    private final Path root;
+public class FSCache implements RepositoryCache {
+    private final Path dir;
 
     FSCache(Path pth) {
-        root = pth;
+        dir = pth;
+    }
+
+    public Path getDirectory() {
+        return dir;
     }
 
     @Override
