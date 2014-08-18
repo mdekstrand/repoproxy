@@ -1,5 +1,7 @@
 This project is a simple caching proxy server, optimized for caching software repositories (Yum, Maven, etc.).
 
+It doesn't work yet.
+
 ## License
 
 Copyright © 2014 Michael Ekstrand.
